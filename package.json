@@ -39,7 +39,8 @@
     "mocha": "^2.2.1",
     "redis": "^2.2.5",
     "server-destroy": "^1.0.0",
-    "sinon": "^1.14.1"
+    "sinon": "^1.14.1",
+    "sync-exec": "^0.6.2"
   },
   "engines": {
     "node": ">= 0.10.16",
