@@ -4,6 +4,26 @@ This file is a manually maintained list of changes for each release. Feel free t
 
 ## Master Branch (Unreleased)
 
+## v.1.12.2 - December 6, 2015
+
+* [Cluster] Fix failover queue not being processed. [Shahar Mor](https://github.com/shaharmor).
+
+## v.1.12.1 - December 5, 2015
+
+* [Cluster] Add queue support for failover and CLUSTERDOWN handling. [Shahar Mor](https://github.com/shaharmor).
+* Emits "error" when connection is down for `scanStream` ([#199](https://github.com/luin/ioredis/issues/199)).
+
+## v1.11.1 - November 26, 2015
+
+* [Sentinel] Emits "error" when all sentinels are unreachable ([#200](https://github.com/luin/ioredis/issues/200)).
+
+## v1.11.0 - November 19, 2015
+
+* Emits "select" event when the database changed.
+* [Cluster] Supports scanStream ([#175](https://github.com/luin/ioredis/issues/175)).
+* Update debug module to 2.2.0
+* Update bluebird module to 2.9.34
+
 ## v1.10.0 - October 24, 2015
 
 * [Cluster] Support redis schema url.
