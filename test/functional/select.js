@@ -5,7 +5,7 @@ describe('select', function () {
     var redis = new Redis({ db: 2 });
     redis.set('foo', '2');
     redis.select('2');
-    redis.get('foo', function (err, res) {
+    redis.getString('foo', function (err, res) {
       expect(res).to.eql('2');
       done();
     });
@@ -19,10 +19,10 @@ describe('select', function () {
         redis.select('3');
         redis.set('foo', '3');
         redis.select('0');
-        redis.get('foo', function (err, res) {
+        redis.getString('foo', function (err, res) {
           expect(res).to.eql('2');
           redis.select('3');
-          redis.get('foo', function (err, res) {
+          redis.getString('foo', function (err, res) {
             expect(res).to.eql('3');
             done();
           });
@@ -39,7 +39,7 @@ describe('select', function () {
       redis.select(2);
       redis.set('foo', '2', function () {
         redis.stream.destroy();
-        redis.get('foo', function (err, res) {
+        redis.getString('foo', function (err, res) {
           expect(res).to.eql('2');
           done();
         });
@@ -50,11 +50,11 @@ describe('select', function () {
   it('should emit "select" event when db changes', function (done) {
     var changes = [];
     var redis = new Redis();
-    redis.select('2', function () {
+    redis.selectString('2', function () {
       expect(changes).to.eql([2]);
-      redis.select('4', function () {
+      redis.selectString('4', function () {
         expect(changes).to.eql([2, 4]);
-        redis.select('4', function () {
+        redis.selectString('4', function () {
           expect(changes).to.eql([2, 4]);
           done();
         });

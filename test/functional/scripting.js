@@ -10,7 +10,7 @@ describe('scripting', function () {
         lua: 'return {KEYS[1],KEYS[2],ARGV[1],ARGV[2]}'
       });
 
-      redis.test('k1', 'k2', 'a1', 'a2', function (err, result) {
+      redis.testString('k1', 'k2', 'a1', 'a2', function (err, result) {
         expect(result).to.eql(['k1', 'k2', 'a1', 'a2']);
         done();
       });
@@ -23,7 +23,7 @@ describe('scripting', function () {
         lua: 'return {KEYS[1],KEYS[2],ARGV[1],ARGV[2]}'
       });
 
-      redis.test(2, 'k1', 'k2', 'a1', 'a2', function (err, result) {
+      redis.testString(2, 'k1', 'k2', 'a1', 'a2', function (err, result) {
         expect(result).to.eql(['k1', 'k2', 'a1', 'a2']);
         done();
       });
@@ -37,7 +37,7 @@ describe('scripting', function () {
         lua: 'return {ARGV[1],ARGV[2]}'
       });
 
-      redis.test('2', 'a2', function (err, result) {
+      redis.testString('2', 'a2', function (err, result) {
         expect(result).to.eql(['2', 'a2']);
         done();
       });
@@ -66,7 +66,7 @@ describe('scripting', function () {
       lua: 'return {KEYS[1],KEYS[2],ARGV[1],ARGV[2]}'
     });
 
-    redis.testBuffer('k1', 'k2', 'a1', 'a2', function (err, result) {
+    redis.test('k1', 'k2', 'a1', 'a2', function (err, result) {
       expect(result).to.eql([new Buffer('k1'), new Buffer('k2'), new Buffer('a1'), new Buffer('a2')]);
       done();
     });
@@ -80,7 +80,7 @@ describe('scripting', function () {
       lua: 'return redis.call("get", KEYS[1])'
     });
 
-    redis.pipeline().set('test', 'pipeline').test('test').exec(function (err, results) {
+    redis.pipeline().setString('test', 'pipeline').testString('test').exec(function (err, results) {
       expect(results).to.eql([[null, 'OK'], [null, 'pipeline']]);
       done();
     });
@@ -191,7 +191,7 @@ describe('scripting', function () {
       lua: 'return {KEYS[1],KEYS[2],ARGV[1],ARGV[2]}'
     });
 
-    redis.echo('k1', 'k2', 'a1', 'a2', function (err, result) {
+    redis.echoString('k1', 'k2', 'a1', 'a2', function (err, result) {
       expect(result).to.eql(['foo:k1', 'foo:k2', 'a1', 'a2']);
       done();
     });

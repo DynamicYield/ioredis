@@ -14,7 +14,7 @@ describe('*scanStream', function () {
       var keys = [];
       var redis = new Redis();
       redis.mset('foo1', 1, 'foo2', 1, 'foo3', 1, 'foo4', 1, 'foo10', 1, function () {
-        var stream = redis.scanStream();
+        var stream = redis.scanStringStream();
         stream.on('data', function (data) {
           keys = keys.concat(data);
         });
@@ -29,7 +29,7 @@ describe('*scanStream', function () {
       var keys = [];
       var redis = new Redis();
       redis.mset('foo1', 1, 'foo2', 1, 'foo3', 1, 'foo4', 1, 'foo10', 1, function () {
-        var stream = redis.scanStream({
+        var stream = redis.scanStringStream({
           match: 'foo??'
         });
         stream.on('data', function (data) {
@@ -45,7 +45,7 @@ describe('*scanStream', function () {
     it('should recognize `COUNT`', function (done) {
       var keys = [];
       var redis = new Redis();
-      stub(Redis.prototype, 'scan', function (args) {
+      stub(Redis.prototype, 'scanString', function (args) {
         var count;
         for (var i = 0; i < args.length; ++i) {
           if (typeof args[i] === 'string' && args[i].toUpperCase() === 'COUNT') {
@@ -53,12 +53,12 @@ describe('*scanStream', function () {
             break;
           }
         }
-        Redis.prototype.scan.restore();
-        Redis.prototype.scan.apply(this, arguments);
+        Redis.prototype.scanString.restore();
+        Redis.prototype.scanString.apply(this, arguments);
         expect(count).to.eql(2);
       });
       redis.mset('foo1', 1, 'foo2', 1, 'foo3', 1, 'foo4', 1, 'foo10', 1, function () {
-        var stream = redis.scanStream({
+        var stream = redis.scanStringStream({
           count: 2
         });
         stream.on('data', function (data) {
@@ -93,7 +93,7 @@ describe('*scanStream', function () {
       var keys = [];
       var redis = new Redis();
       redis.mset('foo1', 1, 'foo2', 1, 'foo3', 1, 'foo4', 1, 'foo10', 1, function () {
-        var stream = redis.scanBufferStream();
+        var stream = redis.scanStream();
         stream.on('data', function (data) {
           keys = keys.concat(data);
         });
@@ -111,7 +111,7 @@ describe('*scanStream', function () {
       var keys = [];
       var redis = new Redis();
       redis.sadd('set', 'foo1', 'foo2', 'foo3', 'foo4', 'foo10', function () {
-        var stream = redis.sscanStream('set', { match: 'foo??' });
+        var stream = redis.sscanStringStream('set', { match: 'foo??' });
         stream.on('data', function (data) {
           keys = keys.concat(data);
         });
@@ -153,7 +153,7 @@ describe('*scanStream', function () {
 
       var keys = [];
       cluster.sadd('set', serverKeys, function () {
-        var stream = cluster.sscanStream('set');
+        var stream = cluster.sscanStringStream('set');
         stream.on('data', function (data) {
           keys = keys.concat(data);
         });

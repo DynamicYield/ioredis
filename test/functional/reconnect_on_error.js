@@ -79,10 +79,10 @@ describe('reconnectOnError', function () {
 
     redis.select(3);
     redis.set('foo', 'bar');
-    redis.sadd('foo', 'a', function (err, res) {
+    redis.saddString('foo', 'a', function (err, res) {
       expect(res).to.eql(1);
       redis.select(3);
-      redis.type('foo', function (err, type) {
+      redis.typeString('foo', function (err, type) {
         expect(type).to.eql('set');
         done();
       });
@@ -98,7 +98,7 @@ describe('reconnectOnError', function () {
     });
 
     redis.set('foo', 'bar');
-    redis.pipeline().get('foo').sadd('foo', 'a').exec(function (err, res) {
+    redis.pipeline().getString('foo').saddString('foo', 'a').exec(function (err, res) {
       expect(res).to.eql([[null, 'bar'], [null, 1]]);
       done();
     });

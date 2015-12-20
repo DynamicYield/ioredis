@@ -10,7 +10,7 @@ describe('lazy connect', function () {
   it('should connect when calling a command', function (done) {
     var redis = new Redis({ lazyConnect: true });
     redis.set('foo', 'bar');
-    redis.get('foo', function (err, result) {
+    redis.getString('foo', function (err, result) {
       expect(result).to.eql('bar');
       done();
     });

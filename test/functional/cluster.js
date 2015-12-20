@@ -521,7 +521,7 @@ describe('cluster', function () {
     var cluster = new Redis.Cluster([
       { host: '127.0.0.1', port: '30001' }
     ]);
-    cluster.get('foo', function (err, result) {
+    cluster.getString('foo', function (err, result) {
       expect(result).to.eql('bar');
       cluster.disconnect();
       disconnect([node1, node2], done);
@@ -587,7 +587,7 @@ describe('cluster', function () {
       var cluster = new Redis.Cluster([
         { host: '127.0.0.1', port: '30001' }
       ]);
-      cluster.pipeline().get('foo').set('foo', 'bar').exec(function (err, result) {
+      cluster.pipeline().getString('foo').setString('foo', 'bar').exec(function (err, result) {
         expect(err).to.eql(null);
         expect(result[0]).to.eql([null, 'bar']);
         expect(result[1]).to.eql([null, 'OK']);
@@ -630,7 +630,7 @@ describe('cluster', function () {
       var cluster = new Redis.Cluster([
         { host: '127.0.0.1', port: '30001' }
       ]);
-      cluster.pipeline().get('foo').set('foo', 'bar').exec(function (err, result) {
+      cluster.pipeline().getString('foo').setString('foo', 'bar').exec(function (err, result) {
         expect(err).to.eql(null);
         expect(result[0]).to.eql([null, 'bar']);
         expect(result[1]).to.eql([null, 'OK']);
@@ -665,7 +665,7 @@ describe('cluster', function () {
       var cluster = new Redis.Cluster([
         { host: '127.0.0.1', port: '30001' }
       ]);
-      cluster.pipeline().get('foo').set('foo', 'bar').exec(function (err, result) {
+      cluster.pipeline().getString('foo').setString('foo', 'bar').exec(function (err, result) {
         expect(err).to.eql(null);
         expect(result[0][0].message).to.match(/MOVED/);
         expect(result[1]).to.eql([null, 'OK']);
@@ -703,7 +703,7 @@ describe('cluster', function () {
         cluster.refreshSlotsCache.apply(cluster, arguments);
       });
       node2.disconnect();
-      cluster.pipeline().get('foo').set('foo', 'bar').exec(function (err, result) {
+      cluster.pipeline().getString('foo').setString('foo', 'bar').exec(function (err, result) {
         expect(err).to.eql(null);
         expect(result[0]).to.eql([null, 'bar']);
         expect(result[1]).to.eql([null, 'OK']);
@@ -751,8 +751,8 @@ describe('cluster', function () {
       ]);
       cluster.multi().get('foo').set('foo', 'bar').exec(function (err, result) {
         expect(err).to.eql(null);
-        expect(result[0]).to.eql([null, 'bar']);
-        expect(result[1]).to.eql([null, 'OK']);
+        expect(result[0]).to.eql([null, new Buffer('bar')]);
+        expect(result[1]).to.eql([null, new Buffer('OK')]);
         cluster.disconnect();
         disconnect([node1, node2], done);
       });
@@ -804,8 +804,8 @@ describe('cluster', function () {
       ]);
       cluster.multi().get('foo').set('foo', 'bar').exec(function (err, result) {
         expect(err).to.eql(null);
-        expect(result[0]).to.eql([null, 'bar']);
-        expect(result[1]).to.eql([null, 'OK']);
+        expect(result[0]).to.eql([null, new Buffer('bar')]);
+        expect(result[1]).to.eql([null, new Buffer('OK')]);
         cluster.disconnect();
         disconnect([node1, node2], done);
       });
@@ -1006,6 +1006,7 @@ describe('cluster', function () {
 
       var cluster = new Redis.Cluster([{ host: '127.0.0.1', port: '30001' }]);
       cluster.on('ready', function () {
+        expect(Object.keys(cluster.masterNodes)).to.eql(['127.0.0.1:30001', '127.0.0.1:30002']);
         expect(Object.keys(cluster.masterNodes).length).to.eql(2);
         slotTable = [
           [0, 5460, ['127.0.0.1', 30003]],

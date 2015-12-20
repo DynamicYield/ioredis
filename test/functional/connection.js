@@ -37,7 +37,7 @@ describe('connection', function () {
     redis.set('foo', 'bar', function () {
       redis.stream.end();
     });
-    redis.get('foo', function (err, res) {
+    redis.getString('foo', function (err, res) {
       expect(res).to.eql('bar');
       done();
     });
@@ -143,7 +143,7 @@ describe('connection', function () {
     it('shoud name the connection if options.connectionName is not null', function (done) {
       var redis = new Redis({ connectionName: 'niceName' });
       redis.once('ready', function() {
-        redis.client('getname', function(err, res) {
+        redis.clientString('getname', function(err, res) {
           expect(res).to.eql('niceName');
           done();
         });
@@ -158,7 +158,7 @@ describe('connection', function () {
         redis.subscribe('l', function() {
           redis.disconnect(true);
           redis.unsubscribe('l', function() {
-            redis.client('getname', function(err, res) {
+            redis.clientString('getname', function(err, res) {
              expect(res).to.eql('niceName');
              done();
            });              
@@ -174,7 +174,7 @@ describe('connection', function () {
       var pub = new Redis({ db: 3 });
       redis.once('ready', function () {
         var pending = 2;
-        redis.blpop('l', 0, function (err, res) {
+        redis.blpopString('l', 0, function (err, res) {
           expect(res[0]).to.eql('l');
           expect(res[1]).to.eql('1');
           if (!--pending) {

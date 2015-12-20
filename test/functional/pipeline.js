@@ -3,7 +3,7 @@
 describe('pipeline', function () {
   it('should return correct result', function (done) {
     var redis = new Redis();
-    redis.pipeline().set('foo', '1').get('foo').set('foo', '2').incr('foo').get('foo').exec(function (err, results) {
+    redis.pipeline().setString('foo', '1').getString('foo').setString('foo', '2').incr('foo').getString('foo').exec(function (err, results) {
       expect(err).to.eql(null);
       expect(results).to.eql([
         [null, 'OK'],
@@ -27,7 +27,7 @@ describe('pipeline', function () {
 
   it('should support mix string command and buffer command', function (done) {
     var redis = new Redis();
-    redis.pipeline().set('foo', 'bar').set('foo', new Buffer('bar')).getBuffer('foo').get(new Buffer('foo')).exec(function (err, results) {
+    redis.pipeline().setString('foo', 'bar').setString('foo', new Buffer('bar')).get('foo').getString(new Buffer('foo')).exec(function (err, results) {
       expect(err).to.eql(null);
       expect(results).to.eql([
         [null, 'OK'],
@@ -53,7 +53,7 @@ describe('pipeline', function () {
   it('should also invoke the command\'s callback', function (done) {
     var redis = new Redis();
     var pending = 1;
-    redis.pipeline().set('foo', 'bar').get('foo', function (err, result) {
+    redis.pipeline().setString('foo', 'bar').getString('foo', function (err, result) {
       expect(result).to.eql('bar');
       pending -= 1;
     }).exec(function (err, results) {
@@ -66,7 +66,7 @@ describe('pipeline', function () {
   it('should support inline transaction', function (done) {
     var redis = new Redis();
 
-    redis.pipeline().multi().set('foo', 'bar').get('foo').exec().exec(function (err, result) {
+    redis.pipeline().multiString().setString('foo', 'bar').getString('foo').execString().exec(function (err, result) {
       expect(result[0][1]).to.eql('OK');
       expect(result[1][1]).to.eql('QUEUED');
       expect(result[2][1]).to.eql('QUEUED');
@@ -83,7 +83,7 @@ describe('pipeline', function () {
 
   it('should support key prefixing', function (done) {
     var redis = new Redis({ keyPrefix: 'foo:' });
-    redis.pipeline().set('bar', 'baz').get('bar').lpush('app1', 'test1').lpop('app1').keys('*').exec(function (err, results) {
+    redis.pipeline().setString('bar', 'baz').getString('bar').lpushString('app1', 'test1').lpopString('app1').keysString('*').exec(function (err, results) {
       expect(err).to.eql(null);
       expect(results).to.eql([
         [null, 'OK'],
@@ -108,7 +108,7 @@ describe('pipeline', function () {
     });
 
     it('should work', function(done) {
-      redis.pipeline().echo('foo', 'bar', '123', 'abc').exec(function(err, results) {
+      redis.pipeline().echoString('foo', 'bar', '123', 'abc').exec(function(err, results) {
         expect(err).to.eql(null);
         expect(results).to.eql([
           [null, ['foo', 'bar', '123', 'abc']]
@@ -120,7 +120,7 @@ describe('pipeline', function () {
     it('should support callbacks', function(done) {
       var pending = 1;
       redis.pipeline()
-        .echo('foo', 'bar', '123', 'abc', function(err, result) {
+        .echoString('foo', 'bar', '123', 'abc', function(err, result) {
           pending -= 1;
           expect(err).to.eql(null);
           expect(result).to.eql(['foo', 'bar', '123', 'abc']);
@@ -144,8 +144,8 @@ describe('pipeline', function () {
         .exec()
         .exec(function(err, results) {
           expect(err).to.eql(null);
-          expect(results[4][1][1]).to.eql(['bar', 'baz', '123', 'abc']);
-          expect(results[4][1][2]).to.eql('asdf');
+          expect(results[4][1][1]).to.eql([new Buffer('bar'), new Buffer('baz'), new Buffer('123'), new Buffer('abc')]);
+          expect(results[4][1][2]).to.eql(new Buffer('asdf'));
           done();
         });
     });
@@ -156,8 +156,8 @@ describe('pipeline', function () {
       var redis = new Redis();
       var pending = 1;
       redis.pipeline([
-        ['set', 'foo', 'bar'],
-        ['get', 'foo', function (err, result) {
+        ['setString', 'foo', 'bar'],
+        ['getString', 'foo', function (err, result) {
           expect(result).to.eql('bar');
           pending -= 1;
         }]

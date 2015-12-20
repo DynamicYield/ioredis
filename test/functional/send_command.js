@@ -4,7 +4,7 @@ describe('send command', function () {
   it('should support callback', function (done) {
     var redis = new Redis();
     redis.set('foo', 'bar');
-    redis.get('foo', function (err, result) {
+    redis.getString('foo', function (err, result) {
       expect(result).to.eql('bar');
       done();
     });
@@ -13,7 +13,7 @@ describe('send command', function () {
   it('should support promise', function () {
     var redis = new Redis();
     redis.set('foo', 'bar');
-    return redis.get('foo').then(function (result) {
+    return redis.getString('foo').then(function (result) {
       expect(result).to.eql('bar');
     });
   });
@@ -38,10 +38,10 @@ describe('send command', function () {
 
   it('should support get & set buffer', function (done) {
     var redis = new Redis();
-    redis.set(new Buffer('foo'), new Buffer('bar'), function (err, res) {
+    redis.setString(new Buffer('foo'), new Buffer('bar'), function (err, res) {
       expect(res).to.eql('OK');
     });
-    redis.getBuffer(new Buffer('foo'), function (err, result) {
+    redis.get(new Buffer('foo'), function (err, result) {
       expect(result).to.be.instanceof(Buffer);
       expect(result.toString()).to.eql('bar');
       done();
@@ -51,9 +51,9 @@ describe('send command', function () {
   it('should support get & set buffer via `call`', function (done) {
     var redis = new Redis();
     redis.call('set', new Buffer('foo'), new Buffer('bar'), function (err, res) {
-      expect(res).to.eql('OK');
+      expect(res.toString()).to.eql('OK');
     });
-    redis.callBuffer('get', new Buffer('foo'), function (err, result) {
+    redis.call('get', new Buffer('foo'), function (err, result) {
       expect(result).to.be.instanceof(Buffer);
       expect(result.toString()).to.eql('bar');
       done();
@@ -63,7 +63,7 @@ describe('send command', function () {
   it('should handle empty buffer', function (done) {
     var redis = new Redis();
     redis.set(new Buffer('foo'), new Buffer(''));
-    redis.getBuffer(new Buffer('foo'), function (err, result) {
+    redis.get(new Buffer('foo'), function (err, result) {
       expect(result).to.be.instanceof(Buffer);
       expect(result.toString()).to.eql('');
       done();
@@ -73,9 +73,9 @@ describe('send command', function () {
   it('should support utf8', function (done) {
     var redis = new Redis();
     redis.set(new Buffer('你好'), new String('你好'));
-    redis.getBuffer('你好', function (err, result) {
+    redis.get('你好', function (err, result) {
       expect(result.toString()).to.eql('你好');
-      redis.get('你好', function (err, result) {
+      redis.getString('你好', function (err, result) {
         expect(result).to.eql('你好');
         done();
       });
@@ -85,7 +85,7 @@ describe('send command', function () {
   it('should consider null as empty str', function (done) {
     var redis = new Redis();
     redis.set('foo', null, function () {
-      redis.get('foo', function (err, res) {
+      redis.getString('foo', function (err, res) {
         expect(res).to.eql('');
         done();
       });
@@ -121,9 +121,9 @@ describe('send command', function () {
     var redis = new Redis({ keyPrefix: 'foo:' });
     redis.set('bar', 'baz');
     redis.get('bar', function (err, result) {
-      expect(result).to.eql('baz');
+      expect(result.toString()).to.eql('baz');
       redis.keys('*', function (err, result) {
-        expect(result).to.eql(['foo:bar']);
+        expect(result).to.eql([new Buffer('foo:bar')]);
         done();
       });
     });
@@ -134,9 +134,9 @@ describe('send command', function () {
     redis.lpush('app1', 'test1');
     redis.lpush('app2', 'test2');
     redis.lpush('app3', 'test3');
-    redis.blpop('app1', 'app2', 'app3', 0, function (err, result) {
+    redis.blpopString('app1', 'app2', 'app3', 0, function (err, result) {
       expect(result).to.eql(['foo:app1', 'test1']);
-      redis.keys('*', function (err, result) {
+      redis.keysString('*', function (err, result) {
         expect(result).to.have.members(['foo:app2', 'foo:app3']);
         done();
       });
@@ -152,7 +152,7 @@ describe('send command', function () {
     redis.zadd('zset2', 3, 'three');
     redis.zunionstore('out', 2, 'zset1', 'zset2', 'WEIGHTS', 2, 3, function (err, result) {
       expect(result).to.eql(3);
-      redis.keys('*', function (err, result) {
+      redis.keysString('*', function (err, result) {
         expect(result).to.have.members(['foo:zset1', 'foo:zset2', 'foo:out']);
         done();
       });
@@ -169,9 +169,9 @@ describe('send command', function () {
     redis.hset('weight_3', 'value', '10');
     redis.lpush('src', '1', '2', '3');
     redis.sort('src', 'BY', 'weight_*->value', 'GET', 'object_*->name', 'STORE', 'dest', function (err, result) {
-      redis.lrange('dest', 0, -1, function (err, result) {
+      redis.lrangeString('dest', 0, -1, function (err, result) {
         expect(result).to.eql(['good', 'better', 'best']);
-        redis.keys('*', function (err, result) {
+        redis.keysString('*', function (err, result) {
           expect(result).to.have.members([
             'foo:object_1',
             'foo:weight_1',
