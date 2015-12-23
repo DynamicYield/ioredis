@@ -10,7 +10,7 @@ describe('watch-exec', function () {
       })
       .then(function(result) {
         expect(result.length).to.eql(1);
-        expect(result[0]).to.eql([null, 'OK']);
+        expect(result[0]).to.eql([null, new Buffer('OK')]);
       })
       .nodeify(done);
   });

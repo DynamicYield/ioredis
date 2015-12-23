@@ -5,7 +5,7 @@ describe('transaction', function () {
     var redis = new Redis();
     redis.multi().set('foo', 'transaction').get('foo').exec(function (err, result) {
       expect(err).to.eql(null);
-      expect(result).to.eql([[null, 'OK'], [null, 'transaction']]);
+      expect(result).to.eql([[null, new Buffer('OK')], [null, new Buffer('transaction')]]);
       done();
     });
   });
@@ -15,7 +15,7 @@ describe('transaction', function () {
     redis.multi().set('foo', 'bar').lpush('foo', 'abc').exec(function (err, result) {
       expect(err).to.eql(null);
       expect(result.length).to.eql(2);
-      expect(result[0]).to.eql([null, 'OK']);
+      expect(result[0]).to.eql([null, new Buffer('OK')]);
       expect(result[1][0]).to.be.instanceof(Error);
       expect(result[1][0].toString()).to.match(/wrong kind of value/);
       done();
@@ -36,10 +36,10 @@ describe('transaction', function () {
     var pending = 1;
     redis.multi().set('foo', 'bar').get('foo', function (err, value) {
       pending -= 1;
-      expect(value).to.eql('QUEUED');
+      expect(value.toString()).to.eql('QUEUED');
     }).exec(function (err, result) {
       expect(pending).to.eql(0);
-      expect(result).to.eql([[null, 'OK'], [null, 'bar']]);
+      expect(result).to.eql([[null, new Buffer('OK')], [null, new Buffer('bar')]]);
       done();
     });
   });
@@ -64,7 +64,7 @@ describe('transaction', function () {
     redis.set('foo', 'bar');
     redis.get('foo');
     redis.exec(function (err, results) {
-      expect(results).to.eql([[null, 'OK'], [null, 'bar']]);
+      expect(results).to.eql([[null, new Buffer('OK')], [null, new Buffer('bar')]]);
       done();
     });
   });
@@ -76,12 +76,12 @@ describe('transaction', function () {
       redis.multi([
         ['set', 'foo', 'bar'],
         ['get', 'foo', function (err, result) {
-          expect(result).to.eql('QUEUED');
+          expect(result.toString()).to.eql('QUEUED');
           pending -= 1;
         }]
       ]).exec(function (err, results) {
         expect(pending).to.eql(0);
-        expect(results[1][1]).to.eql('bar');
+        expect(results[1][1].toString()).to.eql('bar');
         done();
       });
     });

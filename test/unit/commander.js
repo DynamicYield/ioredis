@@ -11,12 +11,12 @@ describe('Commander', function () {
     var command;
 
     var c = new Commander();
-    command = c.call('set', 'foo', 'bar');
+    command = c.call('set', ['foo', 'bar']);
     expect(command.name).to.eql('set');
     expect(command.args[0]).to.eql('foo');
     expect(command.args[1]).to.eql('bar');
 
-    command = c.callBuffer('set', ['foo', 'bar']);
+    command = c.callString('set', 'foo', 'bar');
     expect(command.name).to.eql('set');
     expect(command.args[0]).to.eql('foo');
     expect(command.args[1]).to.eql('bar');
@@ -25,7 +25,7 @@ describe('Commander', function () {
     expect(command.name).to.eql('set');
     expect(command.args.length).to.eql(2);
 
-    command = c.callBuffer('set', 'foo', 'bar', function () {});
+    command = c.callString('set', 'foo', 'bar', function () {});
     expect(command.name).to.eql('set');
     expect(command.args.length).to.eql(2);
 

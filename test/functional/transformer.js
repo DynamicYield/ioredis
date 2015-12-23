@@ -5,9 +5,9 @@ describe('transformer', function () {
     describe('hmset', function () {
       it('should support object', function (done) {
         var redis = new Redis();
-        redis.hmset('foo', { a: 1, b: '2' }, function (err, result) {
+        redis.hmsetString('foo', { a: 1, b: '2' }, function (err, result) {
           expect(result).to.eql('OK');
-          redis.hget('foo', 'b', function (err, result) {
+          redis.hgetString('foo', 'b', function (err, result) {
             expect(result).to.eql('2');
             done();
           });
@@ -21,9 +21,9 @@ describe('transformer', function () {
         var map = new Map();
         map.set('a', 1);
         map.set('b', '2');
-        redis.hmset('foo', map, function (err, result) {
+        redis.hmsetString('foo', map, function (err, result) {
           expect(result).to.eql('OK');
-          redis.hget('foo', 'b', function (err, result) {
+          redis.hgetString('foo', 'b', function (err, result) {
             expect(result).to.eql('2');
             done();
           });
@@ -31,9 +31,9 @@ describe('transformer', function () {
       });
       it('should not affect the old way', function (done) {
         var redis = new Redis();
-        redis.hmset('foo', 'a', 1, 'b', '2', function (err, result) {
+        redis.hmsetString('foo', 'a', 1, 'b', '2', function (err, result) {
           expect(result).to.eql('OK');
-          redis.hget('foo', 'b', function (err, result) {
+          redis.hgetString('foo', 'b', function (err, result) {
             expect(result).to.eql('2');
             done();
           });
@@ -44,9 +44,9 @@ describe('transformer', function () {
     describe('mset', function () {
       it('should support object', function (done) {
         var redis = new Redis();
-        redis.mset({ a: 1, b: '2' }, function (err, result) {
+        redis.msetString({ a: 1, b: '2' }, function (err, result) {
           expect(result).to.eql('OK');
-          redis.mget('a', 'b', function (err, result) {
+          redis.mgetString('a', 'b', function (err, result) {
             expect(result).to.eql(['1', '2']);
             done();
           });
@@ -70,9 +70,9 @@ describe('transformer', function () {
       });
       it('should not affect the old way', function (done) {
         var redis = new Redis();
-        redis.mset('a', 1, 'b', '2', function (err, result) {
+        redis.msetString('a', 1, 'b', '2', function (err, result) {
           expect(result).to.eql('OK');
-          redis.mget('a', 'b', function (err, result) {
+          redis.mgetString('a', 'b', function (err, result) {
             expect(result).to.eql(['1', '2']);
             done();
           });
@@ -84,7 +84,7 @@ describe('transformer', function () {
       it('should return an object', function (done) {
         var redis = new Redis();
         redis.hmset('foo', 'k1', 'v1', 'k2', 'v2', function () {
-          redis.hgetall('foo', function (err, result) {
+          redis.hgetallString('foo', function (err, result) {
             expect(result).to.eql({ k1: 'v1', k2: 'v2' });
             done();
           });
