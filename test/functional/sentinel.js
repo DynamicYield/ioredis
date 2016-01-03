@@ -281,7 +281,7 @@ describe('sentinel', function () {
         c.destroy();
         master.disconnect();
         redis.get('foo', function (err, res) {
-          expect(res).to.eql('bar');
+          expect(res.toString()).to.eql('bar');
           redis.disconnect();
           newMaster.disconnect(function () {
             sentinel.disconnect(done);
