@@ -448,7 +448,7 @@ describe('cluster', function () {
         lazyConnect: false,
         retryDelayOnClusterDown: 1
       });
-      cluster.get('foo', function (_, res) {
+      cluster.getString('foo', function (_, res) {
         expect(res).to.eql('bar');
         cluster.disconnect();
         disconnect([node1, node2], done);

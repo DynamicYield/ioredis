@@ -80,10 +80,10 @@ describe('transformer', function () {
       });
       it('should work with keyPrefix option', function (done) {
         var redis = new Redis({ keyPrefix: 'foo:' });
-        redis.mset({ a: 1, b: '2' }, function (err, result) {
+        redis.msetString({ a: 1, b: '2' }, function (err, result) {
           expect(result).to.eql('OK');
           var otherRedis = new Redis();
-          otherRedis.mget('foo:a', 'foo:b', function (err, result) {
+          otherRedis.mgetString('foo:a', 'foo:b', function (err, result) {
             expect(result).to.eql(['1', '2']);
             done();
           });
@@ -96,7 +96,7 @@ describe('transformer', function () {
         var redis = new Redis();
         redis.msetnx({ a: 1, b: '2' }, function (err, result) {
           expect(result).to.eql(1);
-          redis.mget('a', 'b', function (err, result) {
+          redis.mgetString('a', 'b', function (err, result) {
             expect(result).to.eql(['1', '2']);
             done();
           });
@@ -112,7 +112,7 @@ describe('transformer', function () {
         map.set('b', '2');
         redis.msetnx(map, function (err, result) {
           expect(result).to.eql(1);
-          redis.mget('a', 'b', function (err, result) {
+          redis.mgetString('a', 'b', function (err, result) {
             expect(result).to.eql(['1', '2']);
             done();
           });
@@ -122,7 +122,7 @@ describe('transformer', function () {
         var redis = new Redis();
         redis.msetnx('a', 1, 'b', '2', function (err, result) {
           expect(result).to.eql(1);
-          redis.mget('a', 'b', function (err, result) {
+          redis.mgetString('a', 'b', function (err, result) {
             expect(result).to.eql(['1', '2']);
             done();
           });
@@ -133,7 +133,7 @@ describe('transformer', function () {
         redis.msetnx({ a: 1, b: '2' }, function (err, result) {
           expect(result).to.eql(1);
           var otherRedis = new Redis();
-          otherRedis.mget('foo:a', 'foo:b', function (err, result) {
+          otherRedis.mgetString('foo:a', 'foo:b', function (err, result) {
             expect(result).to.eql(['1', '2']);
             done();
           });
