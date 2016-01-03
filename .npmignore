@@ -1,3 +1,4 @@
-node_modules
 *.cpuprofile
 /test.js
+logo.svg
+medis.png
