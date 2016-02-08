@@ -141,11 +141,11 @@ describe('pipeline', function () {
         .set('foo', 'asdf')
         .echo('bar', 'baz', '123', 'abc')
         .get('foo')
-        .exec()
+        .execString()
         .exec(function(err, results) {
           expect(err).to.eql(null);
-          expect(results[4][1][1]).to.eql([new Buffer('bar'), new Buffer('baz'), new Buffer('123'), new Buffer('abc')]);
-          expect(results[4][1][2]).to.eql(new Buffer('asdf'));
+          expect(results[4][1][1]).to.eql(['bar', 'baz', '123', 'abc']);
+          expect(results[4][1][2]).to.eql('asdf');
           done();
         });
     });

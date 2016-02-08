@@ -1102,7 +1102,7 @@ describe('cluster', function () {
         expect(cluster.to('masters').nodes).to.have.lengthOf(2);
         expect(cluster.to('slaves').nodes).to.have.lengthOf(1);
         expect(cluster.to('all').nodes).to.have.lengthOf(3);
-        cluster.to('masters').call('keys', function (err, keys) {
+        cluster.to('masters').callString('keys', function (err, keys) {
           expect(keys).to.have.lengthOf(2);
           expect([].concat.apply([], keys).sort()).to.eql(['key30001', 'key30002']);
           cluster.disconnect();

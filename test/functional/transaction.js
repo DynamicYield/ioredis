@@ -69,13 +69,11 @@ describe('transaction', function () {
     });
   });
 
-  it('should support execBuffer', function (done) {
+  it('should support execString', function (done) {
     var redis = new Redis();
-    redis.multi().set('foo', 'bar').get('foo').execBuffer(function (err, res) {
-      expect(res[0][1]).to.be.instanceof(Buffer);
-      expect(res[0][1].toString()).to.eql('OK');
-      expect(res[1][1]).to.be.instanceof(Buffer);
-      expect(res[1][1].toString()).to.eql('bar');
+    redis.multi().set('foo', 'bar').get('foo').execString(function (err, res) {
+      expect(res[0][1]).to.eql('OK');
+      expect(res[1][1]).to.eql('bar');
       done();
     });
   });
