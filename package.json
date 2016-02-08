@@ -1,6 +1,6 @@
 {
   "name": "ioredis",
-  "version": "1.13.2",
+  "version": "1.15.0",
   "description": "A delightful, performance-focused Redis client for Node and io.js",
   "main": "index.js",
   "scripts": {
@@ -32,6 +32,7 @@
   "devDependencies": {
     "chai": "^2.2.0",
     "codeclimate-test-reporter": "0.0.4",
+    "cz-conventional-changelog": "^1.1.5",
     "istanbul": "^0.3.13",
     "jsdoc": "^3.3.0-beta3",
     "jsdoc-to-markdown": "^1.0.3",
@@ -45,5 +46,10 @@
   "engines": {
     "node": ">= 0.10.16",
     "iojs": ">= 1.0.0"
+  },
+  "config": {
+    "commitizen": {
+      "path": "./node_modules/cz-conventional-changelog"
+    }
   }
 }
