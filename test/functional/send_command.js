@@ -187,22 +187,4 @@ describe('send command', function () {
       });
     });
   });
-
-  it('should support command timeout (without timeout)', function (done) {
-    var redis = new Redis({ commandTimeout: 10 });
-    redis.setString('timeout_a', 'x', function (err, result) {
-      expect(err).to.be.null;
-      expect(result).to.eql('OK');
-      done();
-    });
-  });
-
-  it('should support command timeout (with timeout)', function (done) {
-    var redis = new Redis({ commandTimeout: 10 });
-    redis.evalString('local j; for i = 1,100000000 do j = i end return "OKA"', '0', function (err, result) {
-      expect(err).not.to.be.null;
-      expect(err.message).to.be.eql('Redis timeout');
-      done();
-    });
-  });
 });
