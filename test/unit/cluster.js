@@ -19,54 +19,21 @@ describe('cluster', function () {
     var cluster = new Cluster([{ port: 7777 }], options);
     expect(cluster.options).to.have.property('showFriendlyErrorStack', false);
     expect(cluster.options).to.have.property('showFriendlyErrorStack', false);
-    expect(cluster.options).to.have.property('readOnly', false);
+    expect(cluster.options).to.have.property('scaleReads', 'master');
   });
 
-  it('should throw when startupNodes is not an array or is empty', function () {
+  it('throws when scaleReads is invalid', function () {
     expect(function () {
-      new Cluster();
-    }).to.throw(/startupNodes/);
-
-    expect(function () {
-      new Cluster([]);
-    }).to.throw(/startupNodes/);
-
-    expect(function () {
-      new Cluster([{}]);
-    }).to.not.throw(/startupNodes/);
+      new Cluster([{}], { scaleReads: 'invalid' });
+    }).to.throw(/Invalid option scaleReads/);
   });
 
-  describe('#executeFailoverCommands', function () {
-    it('should execute the commands', function (done) {
-      var cluster = {
-        resetFailoverQueue: function () {
-          this.failoverQueue = [];
-        },
-        failoverQueue: []
-      };
-
-      cluster.failoverQueue.push(function () {
-        expect(this.failoverQueue).to.have.length(0);
-        done();
-      }.bind(cluster));
-      Cluster.prototype.executeFailoverCommands.call(cluster);
-    });
-  });
-
-  describe('#executeClusterDownCommands', function () {
-    it('should execute the commands', function (done) {
-      var cluster = {
-        resetClusterDownQueue: function () {
-          this.clusterDownQueue = [];
-        },
-        clusterDownQueue: []
-      };
-
-      cluster.clusterDownQueue.push(function () {
-        expect(this.clusterDownQueue).to.have.length(0);
-        done();
-      }.bind(cluster));
-      Cluster.prototype.executeClusterDownCommands.call(cluster);
+  describe('#nodes()', function () {
+    it('throws when role is invalid', function () {
+      var cluster = new Cluster([{}]);
+      expect(function () {
+        cluster.nodes('invalid');
+      }).to.throw(/Invalid role/);
     });
   });
 });
