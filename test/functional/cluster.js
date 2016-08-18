@@ -1293,7 +1293,7 @@ describe('cluster', function () {
         redisOptions: { showFriendlyErrorStack: true }
       });
       cluster.on('ready', function () {
-        expect(Object.keys(cluster.masterNodes).length).to.eql(2);
+        expect(Object.keys(cluster.nodes('master')).length).to.eql(2);
         slotTable = [
           [0, 5460, ['127.0.0.1', 30003]],
           [5461, 10922, ['127.0.0.1', 30002]]

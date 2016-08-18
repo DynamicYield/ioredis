@@ -8,10 +8,10 @@ describe('dropBufferSupport', function () {
 
   it('should return strings correctly', function (done) {
     var redis = new Redis({ dropBufferSupport: false });
-    redis.set('foo', new Buffer('bar'), function (err, res) {
+    redis.setString('foo', new Buffer('bar'), function (err, res) {
       expect(err).to.eql(null);
       expect(res).to.eql('OK');
-      redis.get('foo', function (err, res) {
+      redis.getString('foo', function (err, res) {
         expect(err).to.eql(null);
         expect(res).to.eql('bar');
         redis.disconnect();
@@ -23,10 +23,10 @@ describe('dropBufferSupport', function () {
   context('enabled', function () {
     it('should reject the buffer commands', function (done) {
       var redis = new Redis({ dropBufferSupport: true });
-      redis.getBuffer('foo', function (err) {
+      redis.get('foo', function (err) {
         expect(err.message).to.match(/Buffer methods are not available/);
 
-        redis.callBuffer('get', 'foo', function (err) {
+        redis.call('get', 'foo', function (err) {
           expect(err.message).to.match(/Buffer methods are not available/);
           redis.disconnect();
           done();
@@ -40,7 +40,7 @@ describe('dropBufferSupport', function () {
         numberOfKeys: 0,
         lua: 'return "string"'
       });
-      redis.getevalBuffer(function (err) {
+      redis.geteval(function (err) {
         expect(err.message).to.match(/Buffer methods are not available/);
         redis.disconnect();
         done();
@@ -49,10 +49,10 @@ describe('dropBufferSupport', function () {
 
     it('should return strings correctly', function (done) {
       var redis = new Redis({ dropBufferSupport: true });
-      redis.set('foo', new Buffer('bar'), function (err, res) {
+      redis.setString('foo', new Buffer('bar'), function (err, res) {
         expect(err).to.eql(null);
         expect(res).to.eql('OK');
-        redis.get('foo', function (err, res) {
+        redis.getString('foo', function (err, res) {
           expect(err).to.eql(null);
           expect(res).to.eql('bar');
           redis.disconnect();
@@ -67,7 +67,7 @@ describe('dropBufferSupport', function () {
         numberOfKeys: 0,
         lua: 'return "string"'
       });
-      redis.geteval(function (err, res) {
+      redis.getevalString(function (err, res) {
         expect(err).to.eql(null);
         expect(res).to.eql('string');
         redis.disconnect();
@@ -78,8 +78,8 @@ describe('dropBufferSupport', function () {
     it('should work with pipeline', function (done) {
       var redis = new Redis({ dropBufferSupport: true });
       var pipeline = redis.pipeline();
-      pipeline.set('foo', 'bar');
-      pipeline.get(new Buffer('foo'));
+      pipeline.setString('foo', 'bar');
+      pipeline.getString(new Buffer('foo'));
       pipeline.exec(function (err, res) {
         expect(err).to.eql(null);
         expect(res[0][1]).to.eql('OK');
@@ -92,9 +92,10 @@ describe('dropBufferSupport', function () {
     it('should work with transaction', function (done) {
       var redis = new Redis({ dropBufferSupport: true });
       redis.multi()
-        .set('foo', 'bar')
-        .get('foo')
-        .exec(function(err, res) {
+        .setString('foo', 'bar')
+        .setString('foo')
+        .execString(function(err, res) {
+          console.log(err);
           expect(err).to.eql(null);
           expect(res[0][1]).to.eql('OK');
           expect(res[1][1]).to.eql('bar');

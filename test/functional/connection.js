@@ -152,7 +152,7 @@ describe('connection', function () {
     it('should name the connection if options.connectionName is not null', function (done) {
       var redis = new Redis({ connectionName: 'niceName' });
       redis.once('ready', function () {
-        redis.client('getname', function (err, res) {
+        redis.clientString('getname', function (err, res) {
           expect(res).to.eql('niceName');
           done();
         });
@@ -166,7 +166,7 @@ describe('connection', function () {
         redis.subscribe('l', function () {
           redis.disconnect(true);
           redis.unsubscribe('l', function () {
-            redis.client('getname', function (err, res) {
+            redis.clientString('getname', function (err, res) {
               expect(res).to.eql('niceName');
               done();
             });
