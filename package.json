@@ -1,7 +1,7 @@
 {
-  "name": "ioredis",
-  "version": "2.3.0",
-  "description": "A delightful, performance-focused Redis client for Node and io.js",
+  "name": "dy-ioredis",
+  "version": "2.3.0-1",
+  "description": "Fork of ioredis!",
   "main": "index.js",
   "scripts": {
     "test": "NODE_ENV=test DEBUG=ioredis:* mocha",
@@ -11,7 +11,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git://github.com/luin/ioredis.git"
+    "url": "git://github.com/DynamicYield/ioredis.git"
   },
   "keywords": [
     "redis",
@@ -19,7 +19,7 @@
     "sentinel",
     "pipelining"
   ],
-  "author": "luin <i@zihua.li> (http://zihua.li)",
+  "author": "Dynamic Yield ltd.",
   "license": "MIT",
   "dependencies": {
     "bluebird": "^3.3.4",
